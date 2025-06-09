@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta
 from flask import render_template, redirect, request, url_for, session, flash, jsonify, abort, g
 from . import db
@@ -7,6 +8,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app.permanent_session_lifetime = timedelta(hours=1)
 
+@app.route('/csrf-token', methods=['GET'])
+def get_csrf_token():
+    token = secrets.token_hex(16)
+    session['csrf_token'] = token
+    return jsonify({'csrf_token': token})
 
 @app.before_request
 def load_logged_in_user():
@@ -16,41 +22,37 @@ def load_logged_in_user():
     else:
         g.user = User.query.filter_by(username=username).first()
 
+@app.route('/current_user', methods=['GET'])
+def current_user():
+    username = session.get('username')
+    if username:
+        return jsonify({"user": username}), 200
+    else:
+        return jsonify({"user": None}), 200
 
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    print("Login data received:", data)  # DEBUG
-
-    if not data:
-        flash("Invalid request data.", "danger")
-        return jsonify({"error": "Invalid JSON data"}), 400
 
     username = data.get('username')
     password = data.get('password')
-    print(f"Username: {username}, Password: {'*' * len(password) if password else None}")  # DEBUG
 
     user = User.query.filter_by(username=username).first()
-    if user:
-        print("User found:", user.username)
-    else:
-        print("User not found")
 
     if user and check_password_hash(user.password, password):
         session['username'] = user.username
         session['role'] = user.role
         session.permanent = True
-        flash("Logged in successfully.", "success")
-        return jsonify({"message": "Logged in successfully", "user": user.username}), 200
+
+        return jsonify({"message": "Logged in successfully", "user": user.username, "role": user.role}), 200
     else:
-        flash("Invalid credentials.", "danger")
         return jsonify({"error": "Invalid username or password"}), 401
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
-    flash("You have been logged out.", "info")
-    return redirect(url_for('login'))
+    return jsonify({"message": "Logged out successfully"}), 200
+
 
 
 @app.route('/')

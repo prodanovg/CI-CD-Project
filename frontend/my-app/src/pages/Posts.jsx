@@ -31,21 +31,29 @@ function Posts() {
   };
 
   return (
-    <div>
-      <h2>Posts</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <ul>
-        {posts.map(post => (
-          <li key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.content}</p>
-            <small>By: {post.author} | {new Date(post.created_at).toLocaleString()}</small>
-          </li>
-        ))}
-      </ul>
-      <button onClick={prevPage} disabled={page <= 1}>Previous</button>
-      <button onClick={nextPage} disabled={page >= pages}>Next</button>
-    </div>
+      <div style={{
+        height: '50vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        textAlign: 'center',
+        paddingLeft: '600px'
+      }}>
+        <h2>Posts</h2>
+        {error && <p style={{color: 'red'}}>{error}</p>}
+        <ul>
+          {posts.map(post => (
+              <li key={post.id}>
+                <h3>{post.title}</h3>
+                <p>{post.content}</p>
+                <small>By: {post.author} | {new Date(post.created_at).toLocaleString()}</small>
+              </li>
+          ))}
+        </ul>
+        <button onClick={prevPage} disabled={page <= 1}>Previous</button>
+        <button onClick={nextPage} disabled={page >= pages}>Next</button>
+      </div>
   );
 }
 

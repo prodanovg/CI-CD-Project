@@ -16,7 +16,7 @@ function Register() {
     setSuccess(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/register', {
+      await axios.post('http://localhost:5000/register', {
         email,
         username,
         password,
@@ -36,34 +36,52 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
+    <div
+      style={{
+        height: '50vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        textAlign: 'center',
+        paddingLeft: '600px',
+      }}
+    >
+      <form onSubmit={handleSubmit} style={{ maxWidth: '400px', width: '100%' }}>
+        <h2>Register</h2>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-        /><br />
+          style={{ width: '100%', marginBottom: '10px', padding: '8px' }}
+        />
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-        /><br />
+          style={{ width: '100%', marginBottom: '10px', padding: '8px' }}
+        />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-        /><br />
-        <button type="submit">Register</button>
+          style={{ width: '100%', marginBottom: '10px', padding: '8px' }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          <button type="submit">Register</button>
+          <button type="button" onClick={() => navigate('/')}>
+            Back
+          </button>
+        </div>
+        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        {success && <p style={{ color: 'green', marginTop: '10px' }}>{success}</p>}
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
 }
