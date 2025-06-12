@@ -9,10 +9,10 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'dev-secret-key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///owasp.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost:5432/database'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.update(
-        SESSION_COOKIE_SAMESITE="None",
+        SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=False,  # True if using HTTPS, False for dev HTTP
     )
 
