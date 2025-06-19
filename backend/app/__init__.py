@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
 
-
 db = SQLAlchemy()
 
 
@@ -23,7 +22,7 @@ def create_app():
     )
 
     # CORS(app, supports_credentials=True, origins=["http://localhost"])
-    CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+    CORS(app, supports_credentials=True, origins=["http://localhost:3000", "http://172.21.0.3:3000"])
 
     db.init_app(app)
 

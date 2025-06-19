@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kiii-project-postgres-config
+  namespace: kiii-project
+data:
+  POSTGRES_DB: admin
+  POSTGRES_USER: admin
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kiii-project-postgres-secret
+  namespace: kiii-project
+type: Opaque
+data:
+  password: YWRtaW4=   #admin
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kiii-project-postgres-pvc
+  namespace: kiii-project
+  labels:
+    app: postgres
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kiii-project-postgres
+  namespace: kiii-project
+spec:
+  serviceName: kiii-project-postgres-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          envFrom:
+            - configMapRef:
+                name: kiii-project-postgres-config
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kiii-project-postgres-secret
+                  key: password
+          ports:
+            - containerPort: 5432
+              name: postgres-port
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kiii-project-postgres-service
+  namespace: kiii-project
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
