@@ -8,11 +8,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app.permanent_session_lifetime = timedelta(hours=1)
 
+
 @app.route('/csrf-token', methods=['GET'])
 def get_csrf_token():
     token = secrets.token_hex(16)
     session['csrf_token'] = token
     return jsonify({'csrf_token': token})
+
 
 @app.before_request
 def load_logged_in_user():
@@ -22,6 +24,7 @@ def load_logged_in_user():
     else:
         g.user = User.query.filter_by(username=username).first()
 
+
 @app.route('/current_user', methods=['GET'])
 def current_user():
     username = session.get('username')
@@ -29,6 +32,7 @@ def current_user():
         return jsonify({"user": username}), 200
     else:
         return jsonify({"user": None}), 200
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -48,11 +52,11 @@ def login():
     else:
         return jsonify({"error": "Invalid username or password"}), 401
 
+
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return jsonify({"message": "Logged out successfully"}), 200
-
 
 
 @app.route('/')
@@ -78,12 +82,16 @@ def register():
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
+    role = data.get('role', 'user')
 
-    if User.query.filter_by(username=username).first():
-        return jsonify({"error": "Username already exists"}), 400
+    if not email or not username or not password:
+        return jsonify({"error": "Email, username, and password are required"}), 400
+
+    if User.query.filter((User.username == username) | (User.email == email)).first():
+        return jsonify({"error": "Username or email already exists"}), 400
 
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
-    new_user = User(username=username, password=hashed_password, role='user', email=email)
+    new_user = User(username=username, password=hashed_password, role=role, email=email)
 
     db.session.add(new_user)
     db.session.commit()

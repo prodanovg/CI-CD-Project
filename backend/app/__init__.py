@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+import os
+
 
 db = SQLAlchemy()
 
@@ -9,13 +11,18 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'dev-secret-key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost:5432/database'
+    print("DATABASE_URL env var:", os.getenv('DATABASE_URL'))
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+        'DATABASE_URL',
+        'postgresql://admin:admin@db:5432/admin'
+    )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.update(
         SESSION_COOKIE_SAMESITE="Lax",
-        SESSION_COOKIE_SECURE=False,  # True if using HTTPS, False for dev HTTP
+        SESSION_COOKIE_SECURE=True,  # True if using HTTPS, False for dev HTTP
     )
 
+    # CORS(app, supports_credentials=True, origins=["http://localhost"])
     CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
     db.init_app(app)

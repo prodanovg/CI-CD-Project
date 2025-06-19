@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: admin
+#    ports:
+#      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://admin:admin@db:5432/admin
+      FLASK_APP: app:create_app
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend/my-app
+
+    ports:
+#       nginx config
+#      - "80:80"
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=tru
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
