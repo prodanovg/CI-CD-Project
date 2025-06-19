@@ -19,7 +19,8 @@ services:
       start_period: 5s
 
   backend:
-    build: ./backend
+#    build: ./backend
+    image: prodanovg/kiii-2025-project-backend:latest
     environment:
       DATABASE_URL: postgresql://admin:admin@db:5432/admin
       FLASK_APP: app:create_app
@@ -30,8 +31,8 @@ services:
         condition: service_healthy
 
   frontend:
-    build: ./frontend/my-app
-
+#    build: ./frontend/my-app
+    image: prodanovg/kiii-2025-project-frontend:latest
     ports:
 #       nginx config
 #      - "80:80"
