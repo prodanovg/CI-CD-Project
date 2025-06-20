@@ -7,19 +7,19 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: admin
-#    ports:
-#      - "5432:5432"
+    #    ports:
+    #      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin"]
+      test: [ "CMD-SHELL", "pg_isready -U admin" ]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
 
   backend:
-#    build: ./backend
+    #    build: ./backend
     image: prodanovg/kiii-2025-project-backend:latest
     environment:
       DATABASE_URL: postgresql://admin:admin@db:5432/admin
@@ -31,12 +31,13 @@ services:
         condition: service_healthy
 
   frontend:
-#    build: ./frontend/my-app
+    #    build: ./frontend/my-app
     image: prodanovg/kiii-2025-project-frontend:latest
     ports:
-#       nginx config
-#      - "80:80"
-      - "3000:3000"
+      #       nginx config
+      - "80:80"
+      #vite confing
+    #      - "3000:3000"
     environment:
       - CHOKIDAR_USEPOLLING=tru
     depends_on:

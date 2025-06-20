@@ -19,11 +19,11 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     watch: {
-      usePolling: true,   // Required for hot reload to work inside Docker
+      usePolling: true,
     },
     proxy: {
       '/api': {
-        target: 'http://backend:5000', // Flask container name and port
+        target: 'http://backend:5000',
         changeOrigin: true,
         secure: false,
       },
