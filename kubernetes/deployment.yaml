@@ -1,62 +1,62 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kiii-project-config
-  namespace: kiii-project
-data:
-  DATABASE_URL: postgresql://admin:admin@kiii-project-postgres-service:5432/admin
-  FLASK_APP: app:create_app
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kiii-project-secret
-  namespace: kiii-project
-type: Opaque
-data:
-  POSTGRES_PASSWORD: YWRtaW4=   #admin
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: kiii-project-deployment
-  namespace: kiii-project
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: kiii-project
-  template:
-    metadata:
-      labels:
-        app: kiii-project
-    spec:
-      containers:
-        - name: kiii-project-frontend
-          image: prodanovg/kiii-2025-project-frontend:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 3000
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
-
-        - name: kiii-project-backend
-          image: prodanovg/kiii-2025-project-backend:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 5000
-          env:
-            - name: DATABASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: kiii-project-config
-                  key: DATABASE_URL
-            - name: FLASK_APP
-              valueFrom:
-                configMapKeyRef:
-                  name: kiii-project-config
-                  key: FLASK_APP
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: kiii-project-config
+#  namespace: kiii-project
+#data:
+#  DATABASE_URL: postgresql://admin:admin@kiii-project-postgres-service:5432/admin
+#  FLASK_APP: app:create_app
+#
+#---
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: kiii-project-secret
+#  namespace: kiii-project
+#type: Opaque
+#data:
+#  POSTGRES_PASSWORD: YWRtaW4=   #admin
+#
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: kiii-project-deployment
+#  namespace: kiii-project
+#spec:
+#  replicas: 2
+#  selector:
+#    matchLabels:
+#      app: kiii-project
+#  template:
+#    metadata:
+#      labels:
+#        app: kiii-project
+#    spec:
+#      containers:
+#        - name: kiii-project-frontend
+#          image: prodanovg/kiii-2025-project-frontend:latest
+#          imagePullPolicy: Always
+#          ports:
+#            - containerPort: 3000
+#          resources:
+#            limits:
+#              memory: "128Mi"
+#              cpu: "500m"
+#
+#        - name: kiii-project-backend
+#          image: prodanovg/kiii-2025-project-backend:latest
+#          imagePullPolicy: Always
+#          ports:
+#            - containerPort: 5000
+#          env:
+#            - name: DATABASE_URL
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: kiii-project-config
+#                  key: DATABASE_URL
+#            - name: FLASK_APP
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: kiii-project-config
+#                  key: FLASK_APP

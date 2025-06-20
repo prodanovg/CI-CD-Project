@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kiii-project-backend
+  namespace: kiii-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kiii-project-backend
+  template:
+    metadata:
+      labels:
+        app: kiii-project-backend
+    spec:
+      containers:
+        - name: backend
+          image: prodanovg/kiii-2025-project-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: kiii-project-config
+                  key: DATABASE_URL
+            - name: FLASK_APP
+              valueFrom:
+                configMapKeyRef:
+                  name: kiii-project-config
+                  key: FLASK_APP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kiii-project-backend-service
+  namespace: kiii-project
+spec:
+  selector:
+    app: kiii-project-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kiii-project-config
+  namespace: kiii-project
+data:
+  DATABASE_URL: postgresql://admin:admin@kiii-project-postgres-service:5432/admin
+  FLASK_APP: app:create_app

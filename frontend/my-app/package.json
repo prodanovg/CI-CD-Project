@@ -1,5 +1,5 @@
 {
-  "name": "e-shop-frontend",
+  "name": "blog-posts-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,15 +15,15 @@
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "axios": "^1.9.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-router": "^7.5.3",
     "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
+    "@types/react": "^18.0.38",
+    "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",

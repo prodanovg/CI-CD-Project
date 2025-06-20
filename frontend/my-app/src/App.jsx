@@ -10,8 +10,10 @@ import axios from 'axios';
 function App() {
     const [user, setUser] = useState(null);
 
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
     useEffect(() => {
-        axios.get('http://localhost:5000/current_user', {withCredentials: true})
+        axios.get(`${backendUrl}/current_user`, {withCredentials: true})
             .then(response => {
                 if (response.data && response.data.user) {
                     setUser(response.data.user);
@@ -23,7 +25,7 @@ function App() {
                 console.error('Failed to fetch current user', err);
                 setUser(null);
             });
-    }, []);
+    }, [backendUrl]);
 
     return (
         <Routes>

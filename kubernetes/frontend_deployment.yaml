@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kiii-project-frontend
+  namespace: kiii-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kiii-project-frontend
+  template:
+    metadata:
+      labels:
+        app: kiii-project-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: prodanovg/kiii-2025-project-frontend:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: REACT_APP_BACKEND_URL
+              value: "http://kiii-project-backend-service:5000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kiii-project-frontend-service
+  namespace: kiii-project
+spec:
+  selector:
+    app: kiii-project-frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
