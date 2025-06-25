@@ -17,14 +17,14 @@ spec:
         - name: frontend
           image: prodanovg/kiii-2025-project-frontend:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 80
           resources:
             limits:
               memory: "256Mi"
               cpu: "500m"
           env:
             - name: REACT_APP_BACKEND_URL
-              value: "http://kiii-project-backend-service:5000"
+              value: "/api"
 ---
 apiVersion: v1
 kind: Service
@@ -36,6 +36,6 @@ spec:
     app: kiii-project-frontend
   ports:
     - protocol: TCP
-      port: 3000
-      targetPort: 3000
+      port: 80
+      targetPort: 80
   type: ClusterIP

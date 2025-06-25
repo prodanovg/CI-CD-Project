@@ -8,6 +8,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app.permanent_session_lifetime = timedelta(hours=1)
 
+@app.after_request
+def after_request(response):
+    print("Response headers:", response.headers)
+    return response
+
 
 @app.route('/csrf-token', methods=['GET'])
 def get_csrf_token():
