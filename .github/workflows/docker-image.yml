@@ -36,3 +36,5 @@ jobs:
         context: ./frontend/my-app
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kiii-2025-project-frontend:latest
+	build-args: |
+          VITE_BACKEND_URL=/api

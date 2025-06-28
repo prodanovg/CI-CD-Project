@@ -10,7 +10,7 @@ import axios from 'axios';
 function App() {
     const [user, setUser] = useState(null);
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000' || '/api';
 
     useEffect(() => {
         axios.get(`${backendUrl}/current_user`, {withCredentials: true})

@@ -27,6 +27,7 @@ def create_app():
         "http://localhost:80"
         "http://localhost:5000",
         "http://localhost:3000/",
+        "http://kiii.local",
     ])
 
     db.init_app(app)
