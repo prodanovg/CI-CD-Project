@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - host: kiii.local
+    - host: 127-0-0-1.nip.io
       http:
         paths:
           - path: /api
