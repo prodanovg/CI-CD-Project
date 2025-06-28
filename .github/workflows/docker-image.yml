@@ -31,7 +31,7 @@ jobs:
         tags: ${{ secrets.DOCKER_USERNAME }}/kiii-2025-project-backend:latest
 
     - name: Build and push frontend image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v4
       with:
         context: ./frontend/my-app
         push: true
