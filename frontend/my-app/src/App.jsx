@@ -1,54 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Routes, Route, Navigate} from 'react-router-dom';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import Posts from './pages/Posts';
-import CreatePost from './pages/CreatePost'; // import your new page
-import axios from 'axios';
+import CreatePost from './pages/CreatePost';
 
 function App() {
-    const [user, setUser] = useState(null);
-
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || '/api';
-
-    useEffect(() => {
-        axios.get(`${backendUrl}/current_user`, {withCredentials: true})
-            .then(response => {
-                if (response.data && response.data.user) {
-                    setUser(response.data.user);
-                } else {
-                    setUser(null);
-                }
-            })
-            .catch(err => {
-                console.error('Failed to fetch current user', err);
-                setUser(null);
-            });
-    }, [backendUrl]);
-
     return (
         <Routes>
-            <Route
-                path="/login"
-                element={!user ? <Login setUser={setUser}/> : <Navigate to="/" replace/>}
-            />
-            <Route
-                path="/register"
-                element={!user ? <Register/> : <Navigate to="/" replace/>}
-            />
-            <Route
-                path="/"
-                element={<Home user={user} setUser={setUser}/>}
-            />
-            <Route
-                path="/posts"
-                element={user ? <Posts/> : <Navigate to="/login" replace/>}
-            />
-            <Route
-                path="/create-post"
-                element={user ? <CreatePost/> : <Navigate to="/login" replace/>}
-            />
+            <Route path="/" element={<Home/>}/>
+            <Route path="/posts" element={<Posts/>}/>
+            <Route path="/create-post" element={<CreatePost/>}/>
+            {/* Redirect unknown routes to home */}
+            <Route path="*" element={<Navigate to="/" replace/>}/>
         </Routes>
     );
 }

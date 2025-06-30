@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {backendUrl} from '../config';
 
 function Posts() {
     const [posts, setPosts] = useState([]);
@@ -7,13 +9,18 @@ function Posts() {
     const [editingPostId, setEditingPostId] = useState(null);
     const [editTitle, setEditTitle] = useState('');
     const [editContent, setEditContent] = useState('');
+    const navigate = useNavigate();
+
 
     const fetchPosts = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/posts', { withCredentials: true });
-            setPosts(response.data.posts);
+            const response = await axios.get(`${backendUrl}/posts`);
+            console.log('Fetched posts:', response.data);
+
+            setPosts(response.data || []);
         } catch (err) {
             setError('Failed to load posts');
+            console.error(err);
         }
     };
 
@@ -23,9 +30,9 @@ function Posts() {
 
     const handleDelete = async (postId) => {
         try {
-            await axios.delete(`http://localhost:5000/posts/${postId}`, { withCredentials: true });
+            await axios.delete(`${backendUrl}/posts/${postId}`);
             setPosts(posts.filter(post => post.id !== postId));
-        } catch (err) {
+        } catch {
             setError('Failed to delete post');
         }
     };
@@ -44,63 +51,76 @@ function Posts() {
 
     const submitUpdate = async (postId) => {
         try {
-            await axios.put(
-                `http://localhost:5000/posts/${postId}`,
-                { title: editTitle, content: editContent },
-                { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
-            );
-            // Update post in state
+            await axios.put(`${backendUrl}/posts/${postId}`, {
+                title: editTitle,
+                content: editContent,
+            }, {
+                headers: {'Content-Type': 'application/json'},
+            });
             setPosts(posts.map(post =>
-                post.id === postId ? { ...post, title: editTitle, content: editContent } : post
+                post.id === postId ? {...post, title: editTitle, content: editContent} : post
             ));
             cancelEditing();
-        } catch (err) {
+        } catch {
             setError('Failed to update post');
         }
     };
 
     return (
-        <div
-            style={{
-                height: '50vh',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                textAlign: 'center',
-                paddingLeft: '600px',
-            }}>
+        <div style={{
+            minHeight: '50vh',
+            maxWidth: '700px',
+            margin: '20px auto',
+            padding: '20px',
+            textAlign: 'center',
+        }}>
             <h2>All Posts</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <button onClick={fetchPosts}>Fetch Posts</button>
+            <button type="button" onClick={() => navigate('/')}>Home</button>
+
+
+            {error && <p style={{color: 'red'}}>{error}</p>}
             {posts.length === 0 ? (
                 <p>No posts found.</p>
             ) : (
                 posts.map(post => (
-                    <div key={post.id} style={{ border: '1px solid #ccc', marginBottom: '15px', padding: '10px' }}>
+                    <div
+                        key={post.id}
+                        style={{border: '1px solid #ccc', marginBottom: '15px', padding: '10px', textAlign: 'left'}}
+                    >
                         {editingPostId === post.id ? (
                             <>
                                 <input
                                     type="text"
                                     value={editTitle}
-                                    onChange={(e) => setEditTitle(e.target.value)}
-                                    style={{ width: '100%', marginBottom: '8px' }}
+                                    onChange={e => setEditTitle(e.target.value)}
+                                    style={{width: '100%', marginBottom: '8px'}}
                                 />
                                 <textarea
                                     value={editContent}
-                                    onChange={(e) => setEditContent(e.target.value)}
+                                    onChange={e => setEditContent(e.target.value)}
                                     rows={4}
-                                    style={{ width: '100%', marginBottom: '8px' }}
+                                    style={{width: '100%', marginBottom: '8px'}}
                                 />
                                 <button onClick={() => submitUpdate(post.id)}>Save</button>
-                                <button onClick={cancelEditing} style={{ marginLeft: '10px' }}>Cancel</button>
+                                <button onClick={cancelEditing} style={{marginLeft: '10px'}}>Cancel</button>
                             </>
                         ) : (
                             <>
                                 <h3>{post.title}</h3>
                                 <p>{post.content}</p>
-                                <p><small>By: {post.author} at {new Date(post.created_at).toLocaleString()}</small></p>
+                                {post.author ? (
+                                    <p style={{fontSize: '0.8em', color: '#555'}}>
+                                        By: {post.author} at {new Date(post.created_at).toLocaleString()}
+                                    </p>
+                                ) : (
+                                    <p style={{fontSize: '0.8em', color: '#555'}}>
+                                        Created at: {new Date(post.created_at).toLocaleString()}
+                                    </p>
+                                )}
                                 <button onClick={() => startEditing(post)}>Update</button>
-                                <button onClick={() => handleDelete(post.id)} style={{ marginLeft: '10px' }}>Delete</button>
+                                <button onClick={() => handleDelete(post.id)} style={{marginLeft: '10px'}}>Delete
+                                </button>
                             </>
                         )}
                     </div>

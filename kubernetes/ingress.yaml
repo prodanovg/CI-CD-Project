@@ -5,7 +5,9 @@ metadata:
   namespace: kiii-project
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
+  ingressClassName: traefik
   rules:
     - host: 127-0-0-1.nip.io
       http:

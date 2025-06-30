@@ -4,7 +4,7 @@ metadata:
   name: kiii-project-frontend
   namespace: kiii-project
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: kiii-project-frontend
@@ -24,7 +24,7 @@ spec:
               cpu: "500m"
           env:
             - name: VITE_BACKEND_URL
-              value: "http://kiii-project-backend-service:5000"
+              value: "/api"
 ---
 apiVersion: v1
 kind: Service
@@ -38,4 +38,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-  type: ClusterIP
+      nodePort: 30080
+  type: NodePort
