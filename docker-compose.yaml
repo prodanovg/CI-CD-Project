@@ -10,7 +10,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin" ]
+      test: ["CMD-SHELL", "pg_isready -U admin"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,9 +34,10 @@ services:
     ports:
       - "3000:80"
     environment:
-      - LOCAL=true
-      - VITE_BACKEND_URL=/api
+      LOCAL: "true"
+      VITE_BACKEND_URL: "/api"
 
+# Uncomment and configure if you want to use nginx as reverse proxy for frontend
 #  nginx:
 #    image: nginx:stable-alpine
 #    ports:
